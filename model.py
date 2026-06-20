@@ -255,8 +255,18 @@ def merge_heads_and_project_output(context, w_o, b_o):
     # TODO: merge the head axis back into d_model and apply the output linear projection.
     return apply_linear_projection(merge_heads_back_to_model_dim(context),w_o,b_o)
 
-# Step 31 - assemble_multi_head_attention_forward (not yet solved)
-# TODO: implement
+# Step 31 - assemble_multi_head_attention_forward
+def assemble_multi_head_attention_forward(query, key, value, w_q, w_k, w_v, w_o, num_heads, mask=None):
+    # TODO: project Q/K/V, split into heads, run scaled dot-product attention, merge heads, output projection.
+    q = apply_linear_projection(query, w_q, bias=None)
+    k = apply_linear_projection(key, w_k, bias=None)
+    v = apply_linear_projection(value, w_v, bias=None)
+
+    q_h, k_h, v_h = split_qkv_into_heads(q, k, v, num_heads)
+    
+    context_h, weights_h = multi_head_scaled_dot_product_attention(q_h, k_h, v_h, mask=mask)
+
+    return merge_heads_and_project_output(context_h,w_o,b_o=None)
 
 # Step 32 - apply_ffn_first_linear_and_relu (not yet solved)
 # TODO: implement
